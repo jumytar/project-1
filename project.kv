@@ -1,0 +1,154 @@
+#:kivy 1.11.1
+
+<GitHubApp>:
+    orientation: 'vertical'
+    spacing: '10dp'
+    padding: '15dp'
+    canvas.before:
+        Color:
+            rgba: 0.96, 0.96, 0.96, 1  # Light gray background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        size_hint_y: None
+        height: '50dp'
+        spacing: '10dp'
+
+        Label:
+            text: 'GitHub Client'
+            font_size: '24sp'
+            bold: True
+            color: 0.2, 0.2, 0.2, 1
+            size_hint_x: 0.6
+
+        Button:
+            id: login_btn
+            text: 'Login'
+            background_color: 0.2, 0.6, 1, 1
+            size_hint_x: 0.4
+            on_release: app.show_login_popup()
+
+    TextInput:
+        id: search_input
+        hint_text: 'Search repositories...'
+        size_hint_y: None
+        height: '40dp'
+        multiline: False
+        padding: '10dp'
+        background_color: 1, 1, 1, 1
+        foreground_color: 0.2, 0.2, 0.2, 1
+        on_text_validate: app.search_repositories(self.text)
+
+    ScrollView:
+        RecycleView:
+            id: repo_list
+            viewclass: 'RepoItem'
+            RecycleBoxLayout:
+                default_size: None, dp(80)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+                spacing: '5dp'
+
+    BoxLayout:
+        size_hint_y: None
+        height: '100dp'
+        spacing: '10dp'
+
+        Image:
+            id: avatar
+            source: ''
+            size_hint_x: 0.2
+            allow_stretch: True
+
+        Label:
+            id: user_info
+            text: 'Not logged in'
+            font_size: '16sp'
+            color: 0.2, 0.2, 0.2, 1
+            valign: 'top'
+            size_hint_x: 0.8
+
+<RepoItem@BoxLayout>:
+    orientation: 'horizontal'
+    spacing: '10dp'
+    padding: '10dp'
+    repo_name: ''
+    repo_desc: ''
+    stars: ''
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        text: root.repo_name
+        font_size: '18sp'
+        bold: True
+        color: 0.1, 0.1, 0.5, 1
+        size_hint_x: 0.4
+        text_size: self.size
+        valign: 'middle'
+
+    Label:
+        text: root.repo_desc
+        font_size: '14sp'
+        color: 0.3, 0.3, 0.3, 1
+        size_hint_x: 0.4
+        text_size: self.size
+        valign: 'middle'
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_x: 0.2
+
+        Label:
+            text: 'Stars'
+            font_size: '12sp'
+            color: 0.5, 0.5, 0.5, 1
+
+        Label:
+            text: root.stars
+            font_size: '16sp'
+            bold: True
+            color: 0.9, 0.6, 0.2, 1
+
+<LoginPopup@Popup>:
+    title: 'GitHub Login'
+    size_hint: 0.8, 0.4
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: '10dp'
+        padding: '20dp'
+
+        TextInput:
+            id: username
+            hint_text: 'Username'
+            multiline: False
+
+        TextInput:
+            id: password
+            hint_text: 'Password'
+            password: True
+            multiline: False
+
+        BoxLayout:
+            spacing: '10dp'
+            size_hint_y: None
+            height: '40dp'
+
+            Button:
+                text: 'Cancel'
+                on_release: root.dismiss()
+
+            Button:
+                text: 'Login'
+                background_color: 0.2, 0.6, 1, 1
+                on_release: app.handle_login(username.text, password.text); root.dismiss()
